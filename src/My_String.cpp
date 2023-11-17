@@ -4,6 +4,7 @@
 #include "My_String.h"
 #include <cstring>
 #include <stdexcept>
+#include <algorithm>
 
 //constructors
 String::String(const char *str) {
@@ -113,6 +114,144 @@ String String::operator+(const String &str) {
     return String {s};
 }
 
+/*
+ * Compares two string objects lexicographically
+ * Complexity: O(n logn)
+ * @return bool true if equal
+ */
+bool String::operator==(const String& str) {
+    if (!m_str && str.m_str || !str.m_str && m_str) {
+        return false;
+    }
+    if (!m_str && !str.m_str) {
+        return true;
+    }
+    char s1[m_size];
+    char s2[str.m_size];
+    std::strcpy(s1, m_str);
+    std::strcpy(s2, str.m_str);
+    std::sort(s1, s1+m_size);
+    std::sort(s2, s2+str.m_size);
+    return !(std::strcmp(s1, s2));
+}
+
+/*
+ * Compares two string objects lexicographically
+ * Complexity: O(n logn)
+ * @return bool true if not equal
+ */
+bool String::operator!=(const String& str) {
+    if (!m_str && str.m_str || !str.m_str && m_str) {
+        return true;
+    }
+    if (!m_str && !str.m_str) {
+        return false;
+    }
+    char s1[m_size];
+    char s2[str.m_size];
+    std::strcpy(s1, m_str);
+    std::strcpy(s2, str.m_str);
+    std::sort(s1, s1+m_size);
+    std::sort(s2, s2+str.m_size);
+    return (std::strcmp(s1, s2));
+}
+
+/*
+ * Compares two string objects lexicographically
+ * Complexity: O(n logn)
+ * @return bool true if rhs is bigger than lhs
+ */
+bool String::operator<(const String& str) {
+    if (!m_str && !str.m_str) {
+        return false;
+    }
+    if (!m_str && str.m_str) {
+        return true;
+    }
+    if (m_str && !str.m_str) {
+        return false;
+    }
+    char s1[m_size];
+    char s2[str.m_size];
+    std::strcpy(s1, m_str);
+    std::strcpy(s2, str.m_str);
+    std::sort(s1, s1+m_size);
+    std::sort(s2, s2+str.m_size);
+    return (std::strcmp(s1, s2) < 0);
+}
+
+/*
+ * Compares two string objects lexicographically
+ * Complexity: O(n logn)
+ * @return bool true if rhs is >= than lhs
+ */
+bool String::operator<=(const String& str) {
+    if (!m_str && !str.m_str) {
+        return false;
+    }
+    if (!m_str && str.m_str) {
+        return true;
+    }
+    if (m_str && !str.m_str) {
+        return false;
+    }
+    char s1[m_size];
+    char s2[str.m_size];
+    std::strcpy(s1, m_str);
+    std::strcpy(s2, str.m_str);
+    std::sort(s1, s1+m_size);
+    std::sort(s2, s2+str.m_size);
+    return (std::strcmp(s1, s2) <= 0);
+}
+
+/*
+ * Compares two string objects lexicographically
+ * Complexity: O(n logn)
+ * @return bool true if lhs is bigger than rhs
+ */
+bool String::operator>(const String& str) {
+    if (!m_str && !str.m_str) {
+        return false;
+    }
+    if (!m_str && str.m_str) {
+        return false;
+    }
+    if (m_str && !str.m_str) {
+        return true;
+    }
+    char s1[m_size];
+    char s2[str.m_size];
+    std::strcpy(s1, m_str);
+    std::strcpy(s2, str.m_str);
+    std::sort(s1, s1+m_size);
+    std::sort(s2, s2+str.m_size);
+    return (std::strcmp(s1, s2) > 0);
+}
+
+/*
+ * Compares two string objects lexicographically
+ * Complexity: O(n logn)
+ * @return bool true if lhs is >= than rhs
+ */
+bool String::operator>=(const String& str) {
+    if (!m_str && !str.m_str) {
+        return false;
+    }
+    if (!m_str && str.m_str) {
+        return false;
+    }
+    if (m_str && !str.m_str) {
+        return true;
+    }
+    char s1[m_size];
+    char s2[str.m_size];
+    std::strcpy(s1, m_str);
+    std::strcpy(s2, str.m_str);
+    std::sort(s1, s1+m_size);
+    std::sort(s2, s2+str.m_size);
+    return (std::strcmp(s1, s2) >= 0);
+}
+
 //public methods
 void String::resize(String::uint cap) {
     set_capacity(cap);
@@ -139,6 +278,37 @@ void String::pop_back() {
     --m_size;
 }
 
+/*
+ * Complexity: O(n)
+ * @returns the position of the first occurrence of the searched for element
+ * @returns -1 otherwise
+ */
+int String::find(char c) {
+    int i {};
+    while (i < m_size) {
+        if (m_str[i] == c) {
+            return i;
+        }
+        ++i;
+    }
+    return -1;
+}
+/*
+ * Complexity O(len(s))
+ * @returns *this
+ */
+String& String::replace(String::uint pos, const char *s) {
+    if (!s) {
+        return *this;
+    }
+    uint i {pos}, j {}, len {std::strlen(s)};
+
+    while (i < m_size && j < len) {
+        m_str[i++] = s[j++];
+    }
+    return *this;
+}
+
 String::uint String::length() const {
     return m_size;
 }
@@ -153,6 +323,14 @@ bool String::empty() const {
 
 String::uint String::capacity() const {
     return m_capacity;
+}
+
+String::iterator String::begin() {
+    return m_str;
+}
+
+String::iterator String::end() {
+    return m_str + m_size;
 }
 
 //private methods

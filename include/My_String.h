@@ -10,6 +10,7 @@
 class String {
 public:
     using uint = unsigned long long;
+    using iterator = char*;
 
     explicit String(const char* str=nullptr);
     String(const String& str);
@@ -24,16 +25,26 @@ public:
     String& operator+=(const char* str);
     String operator+(const char* str);
     String operator+(const String& str);
+    bool operator==(const String& str);
+    bool operator!=(const String& str);
+    bool operator<(const String& str);
+    bool operator<=(const String& str);
+    bool operator>(const String& str);
+    bool operator>=(const String& str);
 
     //methods
     void push_back(char c);
     void pop_back();
     void resize(uint cap);
     void clear();
+    int find(char c);
+    String& replace(uint pos, const char* s);
     //getters
     [[nodiscard]] uint length() const;
-    bool empty() const;
-    uint capacity() const;
+    [[nodiscard]] bool empty() const;
+    [[nodiscard]] uint capacity() const;
+    iterator begin();
+    iterator end();
 
 private:
     char* m_str {};
