@@ -3,7 +3,6 @@
 //
 #include "My_String.h"
 #include <cstring>
-#include <ostream>
 #include <stdexcept>
 
 //constructors
@@ -17,6 +16,13 @@ String::String(const char *str) {
     set_size(len);
 }
 
+//copy constructor
+String::String(const String& str) {
+    set_capacity(str.m_capacity);
+    set_size(str.m_size);
+    set_str(str.m_str);
+}
+
 //destructor
 String::~String() {
     delete []m_str;
@@ -28,6 +34,16 @@ std::ostream& operator<<(std::ostream& out, const String& str) {
         out << str.m_str[i];
     }
     return out;
+}
+
+std::istream& operator>>(std::istream& in, String& str) {
+    char c {};
+    in.get(c);
+    while (!std::isspace(c)) {
+        str.push_back(c);
+        in.get(c);
+    }
+    return in;
 }
 
 String& String::operator=(const String &str) {
@@ -49,6 +65,54 @@ char& String::operator[](String::uint index) {
     return m_str[index];
 }
 
+String& String::operator+=(const String &str) {
+    if (m_capacity < m_size + str.m_size + 1) {
+        resize((m_size + str.m_size + 1) * 2);
+    }
+    for (int i {0}; i < str.m_size; ++i) {
+        m_str[m_size++] = str.m_str[i];
+    }
+    return *this;
+}
+
+String& String::operator+=(const char* str) {
+    String::uint len {std::strlen(str)};
+    if (m_capacity < m_size + len + 1) {
+        resize((m_size + len + 1) * 2);
+    }
+    for (int i {0}; i < len; ++i) {
+        m_str[m_size++] = str[i];
+    }
+
+    return *this;
+}
+
+String String::operator+(const char* str) {
+    String::uint len {std::strlen(str)};
+    char s[len + m_size + 1];
+    String::uint i {}, j {}, k {};
+    while (i < len + m_size && j < m_size) {
+        s[i++] = m_str[j++];
+    }
+    while (i < len + m_size && k < len) {
+        s[i++] = str[k++];
+    }
+
+    return String {s};
+}
+
+String String::operator+(const String &str) {
+    char s[m_size + str.m_size + 1];
+    String::uint i {}, j {}, k {};
+    while (i < m_size + str.m_size && j < m_size) {
+        s[i++] = m_str[j++];
+    }
+    while (i < m_size + str.m_size && k < str.m_size) {
+        s[i++] = str.m_str[k++];
+    }
+    return String {s};
+}
+
 //public methods
 void String::resize(String::uint cap) {
     set_capacity(cap);
@@ -60,7 +124,7 @@ void String::resize(String::uint cap) {
 }
 
 void String::push_back(char c) {
-    if (m_size == m_capacity) {
+    if (!m_capacity || m_size == m_capacity-1) {
         if (!m_capacity)
             ++m_capacity;
         resize(m_capacity * 2);
@@ -79,13 +143,26 @@ String::uint String::length() const {
     return m_size;
 }
 
+void String::clear() {
+    m_size = 0;
+}
+
+bool String::empty() const {
+    return (!m_size);
+}
+
+String::uint String::capacity() const {
+    return m_capacity;
+}
+
 //private methods
 void String::set_str(const char* str) {
     if (!str) {
         return;
     }
     delete []m_str;
-    m_str = new char[m_capacity];
+    m_str = new char[m_capacity-1];
+    m_str[m_capacity] = '\0';
     std::strcpy(m_str, str);
 }
 
