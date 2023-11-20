@@ -23,11 +23,30 @@ public:
 
     //constructors
     My_Single_Linked_List(std::initializer_list<T> l) {
-        for (auto it {l.begin()}; it != l.end(); ++it) {
-            push_front(*it);
+        auto it {l.begin()};
+        push_front(*it);
+        ++it;
+        Node* tail {m_head};
+        for (; it != l.end(); ++it) {
+            insert_after(tail, *it);
+            tail = tail->m_next;
         }
     };
     My_Single_Linked_List() : m_head {nullptr} {}
+
+    My_Single_Linked_List(const My_Single_Linked_List& lhs) {
+        destroy(); // deletes current linked list
+        if (!lhs.m_head) {
+            m_head = nullptr;
+            return;
+        }
+        push_front(lhs.m_head->m_info);
+        Node* it {m_head};
+        for (auto curr {lhs.m_head->m_next}; curr!= nullptr; curr=curr->m_next) {
+            insert_after(it, curr->m_info);
+            it = it->m_next;
+        }
+    }
 
     //destructor
     ~My_Single_Linked_List() {
@@ -133,6 +152,50 @@ public:
         m_head = mergeSort(m_head, pred);
     }
 
+    /*
+     * merges two linked lists that are in sorted order
+     * if not sorted order then undefined behaviour
+     * Complexity: (min(n,m))
+     * the list that is merged into this object will be emptied
+     */
+    void merge(My_Single_Linked_List& other) {
+        if (!m_head || !other.m_head) {
+            return;
+        }
+        Node* iter {m_head};
+        Node* merged {};
+        if (iter->m_info < other.m_head->m_info) {
+            merged = iter;
+            iter = iter->m_next;
+            merged->m_next = nullptr;
+        } else {
+            merged = other.m_head;
+            other.m_head = other.m_head->m_next;
+            merged->m_next = nullptr;
+        }
+        Node* mergedIt {merged};
+        while (iter && other.m_head) {
+            if (iter->m_info < other.m_head->m_info) {
+                mergedIt->m_next = iter;
+                iter = iter->m_next;
+                mergedIt = mergedIt->m_next;
+                mergedIt->m_next = nullptr;
+            } else {
+                mergedIt->m_next = other.m_head;
+                other.m_head = other.m_head->m_next;
+                mergedIt = mergedIt->m_next;
+                mergedIt->m_next = nullptr;
+            }
+        }
+        if (iter) {
+            mergedIt->m_next = iter;
+        }
+        if (other.m_head) {
+            mergedIt->m_next = other.m_head;
+        }
+        m_head = merged;
+    }
+
     //operations
     friend std::ostream& operator<<(std::ostream& out, const My_Single_Linked_List<T>& rhs) {
         for(Node* curr {rhs.m_head}; curr != nullptr; curr=curr->m_next) {
@@ -142,8 +205,34 @@ public:
         return out;
     }
 
+    My_Single_Linked_List& operator=(const My_Single_Linked_List& rhs) {
+        if (this == &rhs) {
+            return *this;
+        }
+        destroy();
+        if (!rhs.m_head) {
+            m_head = nullptr;
+            return *this;
+        }
+        push_front(rhs.m_head->m_info);
+        Node* it {m_head};
+        for (auto curr {rhs.m_head->m_next}; curr!= nullptr; curr=curr->m_next) {
+            insert_after(it, curr->m_info);
+            it = it->m_next;
+        }
+        return *this;
+    }
+
 private:
     Node* m_head {};
+
+    void destroy() {
+        while (m_head) {
+            Node* temp {m_head};
+            m_head = m_head->m_next;
+            delete temp;
+        }
+    }
 
     Node* mergeSort(Node* head, bool(*pred)(T l, T r)) {
         if(!head || !head->m_next)
