@@ -251,15 +251,19 @@ int get_nr_of_friends(int nrNode) {
     return nrFriends;
 }
 
-// Example program made for my DSA class at uni 29.11.2023
-/*
-int main() {
+bool is_valid_id(int n) {
+    return (n >= 1 && n <= CURR_NR_NODES);
+}
+
+/* Example program written for my DSA class 29.11.2023
+ * int main() {
     INFO = alloc_info(NR_NODES_INIT+OFFSET);
     matrice_adj = alloc_mat_adj(NR_NODES_INIT+OFFSET);
     zero_mat_adj(matrice_adj, MATRICE_ADJ_SIZE);
     bool on {true};
     while (on) {
-        std::cout << "1. Print a list of all the people\n"
+        std::cout << "------------------------------------------------------------------------------\n"
+                     "1. Print a list of all the people\n"
                      "2. Add person\n"
                      "3. Show a person's friends\n"
                      "4. Add a person 2 as a friend to person 1\n"
@@ -282,39 +286,63 @@ int main() {
             }
             case 3: {
                 std::cout << "Type in the person's ID: ";
-                int p;
+                char p;
                 std::cin >> p;
-                print_node_info(p);
-                std::cout << " numbers " << get_nr_of_friends(p) << " friends: ";
-                list_friends(p);
+                if (!is_valid_id(p-'0')) {
+                    std::cout << "ERROR: WRONG ID!\n";
+                    continue;
+                }
+                print_node_info(p-'0');
+                std::cout << " numbers " << get_nr_of_friends(p-'0') << " friends: ";
+                list_friends(p-'0');
                 std::cout << '\n';
                 break;
             }
             case 4: {
                 std::cout << "Enter the id of person 1: ";
-                int p1;
+                char p1;
                 std::cin >> p1;
+                if (!is_valid_id(p1-'0')) {
+                    std::cout << "ERROR: ID OF PERSON 1 IS NOT VALID!\n";
+                    continue;
+                }
                 std::cout << "Enter the id of person 2: ";
-                int p2;
+                char p2;
                 std::cin >> p2;
-                add_edge(p1, p2);
+                if (!is_valid_id(p2-'0')) {
+                    std::cout << "ERROR: ID OF PERSON 2 IS NOT VALID!\n";
+                    continue;
+                }
+                add_edge(p1-'0', p2-'0');
                 break;
             }
             case 5: {
                 std::cout << "Enter the id of person 1: ";
-                int p1;
+                char p1;
                 std::cin >> p1;
+                if (!is_valid_id(p1-'0')) {
+                    std::cout << "ERROR: ID OF PERSON 1 IS NOT VALID!\n";
+                    continue;
+                }
                 std::cout << "Enter the id of person 2: ";
-                int p2;
+                char p2;
                 std::cin >> p2;
-                remove_edge(p1, p2);
+                if (!is_valid_id(p2-'0')) {
+                    std::cout << "ERROR: ID OF PERSON 2 IS NOT VALID!\n";
+                    continue;
+                }
+                remove_edge(p1-'0', p2-'0');
                 break;
             }
             case 6: {
                 std::cout << "Enter the id of the person you wish to remove: ";
-                int p;
+                char p;
                 std::cin>>p;
-                sterge_nod(p);
+                if (!is_valid_id(p-'0')) {
+                    std::cout << "ERROR: ID OF PERSON IS NOT VALID!\n";
+                    continue;
+                }
+                sterge_nod(p-'0');
                 break;
             }
             case 7: {
@@ -336,6 +364,6 @@ int main() {
     delete_mat_adj();
     return 0;
 }
-*/
+ */
 
 #endif //DATA_STRUCTURES_GRAPH_WITH_ADJACENCY_MATRIX_H

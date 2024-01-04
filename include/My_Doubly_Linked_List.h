@@ -176,6 +176,10 @@ public:
         return nullptr;
     }
 
+    T& top() {
+        return m_head->m_info;
+    }
+
     //methods for capacity
     [[nodiscard]] bool empty() const {
         return (!m_tail);

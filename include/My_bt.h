@@ -5,19 +5,13 @@
 #ifndef DATA_STRUCTURES_MY_BT_H
 #define DATA_STRUCTURES_MY_BT_H
 #include "My_Doubly_Linked_List.h"
+#include "TreeNode.h"
 #include <cmath>
+#include <iostream>
 
 template<typename T>
 class Bt {
 public:
-    struct TreeNode {
-        TreeNode()=default;
-        explicit TreeNode(const T& info, TreeNode* left= nullptr, TreeNode* right= nullptr)
-        : m_info{info}, m_left {left}, m_right{right} {}
-        T m_info {};
-        TreeNode* m_left {};
-        TreeNode* m_right {};
-    };
     //destructor
     ~Bt() {
         destroy_tree(m_root);
@@ -27,9 +21,9 @@ public:
     void push_back(const T& val) {
         int i {(m_size + 1)/2};
         int ctr {};
-        TreeNode* x {};
+        TreeNode<T>* x {};
         if (m_root) {
-            My_Doubly_Linked_List<TreeNode*> q {m_root};
+            My_Doubly_Linked_List<TreeNode<T>*> q {m_root};
             while (!q.empty() && ctr < i) {
                 x = q.top();
                 q.pop_front();
@@ -53,7 +47,7 @@ public:
             }
         }
         ++m_size;
-        m_height = std::log2(m_size);
+        //m_height = std::log2(m_size);
     }
 
     void preorder_print() {
@@ -74,11 +68,11 @@ public:
     }
 
 private:
-    TreeNode* m_root {};
+    TreeNode<T>* m_root {};
     int m_height {};
     int m_size {};
 
-    void preorder(TreeNode* root) {
+    void preorder(TreeNode<T>* root) {
         if (!root) {
             return;
         }
@@ -87,7 +81,7 @@ private:
         preorder(root->m_right);
     }
 
-    void inorder(TreeNode* root) {
+    void inorder(TreeNode<T>* root) {
         if (!root) {
             return;
         }
@@ -96,7 +90,7 @@ private:
         preorder(root->m_right);
     }
 
-    void postorder(TreeNode* root) {
+    void postorder(TreeNode<T>* root) {
         if (!root) {
             return;
         }
@@ -105,7 +99,7 @@ private:
         std::cout << root->m_info << " ";
     }
 
-    void destroy_tree(TreeNode* root) {
+    void destroy_tree(TreeNode<T>* root) {
         if (!root) {
             return;
         }
