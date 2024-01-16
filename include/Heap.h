@@ -17,7 +17,8 @@ public:
             heapify_down(i);
         }
     }
-    void insert(const T& x) {
+    Heap()=default;
+    void push(const T& x) {
         m_heap.push_back(x);
         if (m_heap.size() > 1)
             heapify_down(m_heap.size()-1);
